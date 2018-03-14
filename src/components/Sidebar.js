@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import defaultAvatar from './media/react.png'
 import './styles/Sidebar.css'
 
 class Sidebar extends Component {
@@ -24,13 +23,10 @@ class Sidebar extends Component {
   }
 
   handleSubmit = () => {
-    const { addChild, createNode, currentId, toggleSidebar } = this.props
-    const title = (this.state.currentTitle.trim()) ? this.state.currentTitle : "NODE"
-    const avatar = (this.state.currentFile) ?
-    URL.createObjectURL(this.state.currentFile) : defaultAvatar
-
-    const childId = createNode(title, avatar).nodeId
-    addChild(currentId, childId)
+    const { toggleSidebar, addNodeToServer } = this.props
+    const title = this.state.currentTitle
+    const file = this.state.currentFile
+    addNodeToServer(file, title)
     toggleSidebar()
   }
 

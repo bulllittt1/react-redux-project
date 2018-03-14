@@ -3,7 +3,8 @@ import './styles/Tree.css'
 import ConnectedTree from '../containers/ConnectedTree'
 import Node from './Node'
 
-export class Tree extends Component {
+class Tree extends Component {
+
   renderChild = childId => {
     const { id } = this.props.node
     return (

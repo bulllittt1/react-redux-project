@@ -1,7 +1,12 @@
 import React, { Component }  from 'react'
 import './styles/Node.css'
 
-export class Node extends Component {
+class Node extends Component {
+  componentDidMount() {
+  const { id, fetchAvatarIfNeeded } = this.props
+  fetchAvatarIfNeeded(id)
+}
+
   handleAddChildClick = e => {
     e.preventDefault()
 
@@ -13,18 +18,19 @@ export class Node extends Component {
   handleRemoveClick = e => {
     e.preventDefault()
 
-    const { removeChild, deleteNode, parentId, id } = this.props
+    const { removeChild, deleteNode, parentId, id, deleteNodeFromServer } = this.props
+    deleteNodeFromServer(id)
     removeChild(parentId, id)
     deleteNode(id)
   }
 
   render() {
-    const { parentId, BUTTON_DISABLED } = this.props
+    const { parentId, buttonDisabled } = this.props
     const { title, avatar } = this.props.node
     const deleteButton = (typeof parentId !== 'undefined') ?
     <button
       className="btn"
-      disabled={BUTTON_DISABLED}
+      disabled={buttonDisabled}
       onClick={this.handleRemoveClick} >
        {"-"}
     </button>
@@ -43,7 +49,7 @@ export class Node extends Component {
               <p> {title} </p>
               <button
                 className="btn"
-                disabled={BUTTON_DISABLED}
+                disabled={buttonDisabled}
                 onClick={this.handleAddChildClick}>
                 {"+"}
               </button>

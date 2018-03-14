@@ -8,6 +8,15 @@ import {
   TOGGLE_SIDEBAR
  } from '../actions'
 import generateTree from './generateTree'
+import {
+  REQUEST_TREE_FROM_SERVER,
+  RECEIVE_TREE_FROM_SERVER,
+  REQUEST_AVATAR_FROM_SERVER,
+  RECEIVE_AVATAR_FROM_SERVER,
+  REQUEST_SERVER,
+  RESPONSE_SERVER
+  } from '../actions/serverActions'
+
 
 const setCurrentId = (state = 0, action) => {
   switch (action.type) {
@@ -18,15 +27,58 @@ const setCurrentId = (state = 0, action) => {
   }
 }
 
+const treeStatus = (state = {
+  received: false,
+  isFetching: false
+}, action) => {
+  switch (action.type) {
+    case REQUEST_TREE_FROM_SERVER:
+      return {
+          ...state,
+          isFetching: true
+      }
+    case RECEIVE_TREE_FROM_SERVER:
+      return {
+          received: true,
+          isFetching: false
+      }
+    default:
+      return state
+  }
+}
+
+const serverStatus = ( state = {
+  loading: false,
+  lastAffectedId: 0,
+  message: ''
+}, action) => {
+  switch (action.type) {
+    case REQUEST_SERVER:
+      return {
+        loading: true,
+        lastAffectedId: action.id,
+        message: action.message
+      }
+    case RESPONSE_SERVER:
+      return {
+        loading: false,
+        lastAffectedId: action.id,
+        message: action.message
+      }
+    default:
+      return state
+  }
+}
+
 const toggleSidebar = (state = {
-    SIDEBAR_ONSCREEN: false,
-    BUTTON_DISABLED: false
+    sidebarOnscreen: false,
+    buttonDisabled: false
 }, action) => {
   switch (action.type) {
     case TOGGLE_SIDEBAR:
       return {
-          SIDEBAR_ONSCREEN: !state.SIDEBAR_ONSCREEN,
-          BUTTON_DISABLED: !state.BUTTON_DISABLED
+          sidebarOnscreen: !state.sidebarOnscreen,
+          buttonDisabled: !state.buttonDisabled
       }
     default:
       return state
@@ -50,7 +102,6 @@ const node = (state, action) => {
       return {
         id: action.nodeId,
         title: action.title,
-        avatar: action.avatar,
         childIds: []
       }
     case ADD_CHILD:
@@ -58,6 +109,17 @@ const node = (state, action) => {
       return {
         ...state,
         childIds: childIds(state.childIds, action)
+      }
+    case REQUEST_AVATAR_FROM_SERVER:
+      return {
+        ...state,
+        avatarIsFetching: true
+      }
+    case RECEIVE_AVATAR_FROM_SERVER:
+      return {
+        ...state,
+        avatar: action.avatar,
+        avatarIsFetching: false
       }
     default:
       return state
@@ -80,25 +142,30 @@ const treeInit = generateTree()
 
 const tree = (state = treeInit, action) => {
   const { nodeId } = action
-  if (typeof nodeId === 'undefined') {
-    return state
+  if (typeof nodeId !== 'undefined') {
+    return {
+      ...state,
+      [nodeId]: node(state[nodeId], action)
+    }
   }
 
-  if (action.type === DELETE_NODE) {
-    const descendantIds = getAllDescendantIds(state, nodeId)
-    return deleteMany(state, [ nodeId, ...descendantIds ])
-  }
-
-  return {
-    ...state,
-    [nodeId]: node(state[nodeId], action)
+  switch (action.type) {
+    case DELETE_NODE:
+      const descendantIds = getAllDescendantIds(state, nodeId)
+      return deleteMany(state, [ nodeId, ...descendantIds ])
+    case RECEIVE_TREE_FROM_SERVER:
+      return Object.assign({}, action.nodes, {1: {...action.nodes[1], avatar: state[1].avatar}})
+    default:
+      return state
   }
 }
 
 const rootReducer = combineReducers({
   currentId: setCurrentId,
   displayParameters:  toggleSidebar,
-  tree
+  tree,
+  treeStatus,
+  serverStatus
 })
 
 export default rootReducer

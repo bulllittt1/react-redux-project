@@ -1,14 +1,14 @@
 import { connect } from 'react-redux'
-import { createNode, addChild, toggleSidebar} from '../actions'
+import { toggleSidebar } from '../actions'
 import Sidebar from '../components/Sidebar'
+import { addNodeToServer } from '../actions/serverActions'
 
 const mapStateToProps = (state) => {
   return {currentId: state.currentId}
 }
 const mapDispatchToProps = {
-  createNode,
-  addChild,
-  toggleSidebar
+  toggleSidebar,
+  addNodeToServer
 }
 
 const ConnectedSidebar = connect(mapStateToProps, mapDispatchToProps)(Sidebar)

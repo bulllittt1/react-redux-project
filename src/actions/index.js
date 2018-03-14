@@ -5,12 +5,10 @@ export const REMOVE_CHILD = 'REMOVE_CHILD'
 export const SET_CURRENT_ID = 'SET_CURRENT_ID'
 export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR'
 
-let nextId = 0
-export const createNode = (title, avatar) => ({
+export const createNode = (id, title) => ({
     type: CREATE_NODE,
-    nodeId: `new_${nextId++}`,
+    nodeId: id,
     title,
-    avatar
   })
 
 export const deleteNode = (nodeId) => ({

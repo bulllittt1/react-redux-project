@@ -1,18 +1,25 @@
-import React from 'react'
+import React, { Component } from 'react'
 import Header from './Header'
-import ConnectedTree from '../containers/ConnectedTree'
-import ConnectedSidebar from '../containers/ConnectedSidebar'
+import Tree from '../containers/ConnectedTree'
+import Sidebar from '../containers/ConnectedSidebar'
 import './styles/App.css'
 
-const App = (props) => {
-  const { SIDEBAR_ONSCREEN } = props
-  return(
-  <div>
-    <Header />
-    {SIDEBAR_ONSCREEN && <ConnectedSidebar /> }
-    <ConnectedTree id={0} />
-  </div>
-  )
+class App extends Component {
+  componentDidMount() {
+    const { fetchTreeIfNeeded } = this.props
+    fetchTreeIfNeeded()
+  }
+
+  render() {
+    const { sidebarOnscreen } = this.props
+    return(
+    <div>
+      <Header />
+      {sidebarOnscreen && <Sidebar /> }
+      <Tree id={1} />
+    </div>
+    )
+  }
 }
 
 export default App
