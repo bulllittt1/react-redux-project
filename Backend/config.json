@@ -1,0 +1,6 @@
+{
+  "Default_avatar": "react.png",
+  "Avatars_folder": "./avatars/",
+  "Default_title": "Node",
+  "Port": "8080"
+}
